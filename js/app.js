@@ -36,8 +36,17 @@ Seguro.prototype.cotizarSeguro = function() {
     // Cada año que la diferencia es mayor, el costo va a reducirse un 3%
     cantidad -= ((diferencia * 3) * cantidad) / 100;
 
+    /**
+     * Si el seguro es básico, se multiplica por un 30% más
+     * Si el seguro es básico, se multiplica por un 50% más
+     */
 
-    console.log(cantidad);
+    if(this.tipo === 'basico'){
+        cantidad *= 1.3;
+    } else{
+        cantidad *= 1.5;
+    }
+    return cantidad;
 }
 
 // User Interface
@@ -84,9 +93,27 @@ UI.prototype.mostrarMensaje = (mensaje, tipo) => {
 
 }
 
+UI.prototype.mostrarResultado = (total, seguro) => {
+    // crear el resultado
+    const div = document.createElement('div');
+    div.classList.add('mt-10');
+
+    div.innerHTML = `
+        <p class="header">Tu Resumen</p>
+        <p class="font-bold">Marca: <span class="font-normal"> ${seguro.marca} </span></p>
+        <p class="font-bold">Año: <span class="font-normal"> ${seguro.year} </span></p>
+        <p class="font-bold">Tipo: <span class="font-normal capitalize"> ${seguro.tipo} </span></p>
+        <p class="font-bold">Total: <span class="font-normal"> $ ${total} </span></p>
+    `;
+
+    const resultadoDiv = document.querySelector('#resultado');
+    resultadoDiv.appendChild(div);
+    
+}
+
 // Instanciar UI
 const ui = new UI();
-console.log(ui);
+// console.log(ui);
 
 // Event Listeners
 // Una vez que se cargó el DOM, se va a ejecutar la función
@@ -109,17 +136,17 @@ function cotizarSeguro(e) {
     console.log(tipo);
 
     if (marca === '' || year === '' || tipo === '') {
-        UI.mostrarMensaje('Todos los campos son obligatorios', 'error');
+        ui.mostrarMensaje('Todos los campos son obligatorios', 'error');
         return;
     } 
-    UI.mostrarMensaje('Cotizando...', 'exito');
+    ui.mostrarMensaje('Cotizando...', 'exito');
 
     // Instanciar el seguro
     const seguro = new Seguro(marca, year, tipo);
     seguro.cotizarSeguro();
 
     // Utilizar el prototype que va a cotizar
-
+    ui.mostrarResultado(total, seguro);
 }
 
 
